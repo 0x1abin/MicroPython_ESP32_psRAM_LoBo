@@ -182,6 +182,7 @@ SRC_C =  $(addprefix esp32/,\
 	machine_neopixel.c \
 	machine_dht.c \
 	machine_ow.c \
+	machine_i2s.c \
 	)
 
 ifdef CONFIG_MICROPY_USE_DISPLAY
@@ -259,6 +260,7 @@ LIBS_SRC_C = $(addprefix esp32/libs/,\
 	ow/owb.c \
 	ow/ds18b20.c \
 	littleflash.c \
+	qrcode.c \
 	)
 
 ifdef CONFIG_MICROPY_USE_DISPLAY

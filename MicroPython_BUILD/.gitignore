@@ -24,15 +24,15 @@ patches/
 
 qstrdefs.generated.h
 /partitions_mpy.csv
-/sdkconfig
-sdkconfig.old
-_sdkconfig.saved
-sdkconfig.fw_esp32
-sdkconfig.fw_esp32_ota
-sdkconfig.fw_psram
-sdkconfig.fw_psram_ota
-sdkconfig.fw_all
-sdkconfig.fw_psram_all
+# /sdkconfig
+# sdkconfig.old
+# _sdkconfig.saved
+# sdkconfig.fw_esp32
+# sdkconfig.fw_esp32_ota
+# sdkconfig.fw_psram
+# sdkconfig.fw_psram_ota
+# sdkconfig.fw_all
+# sdkconfig.fw_psram_all
 
 make_firmwares.sh
 make_firmware_archives.sh
