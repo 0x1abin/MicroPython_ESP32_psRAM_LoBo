@@ -24,6 +24,7 @@
  * THE SOFTWARE.
  */
 
+<<<<<<< HEAD
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -48,24 +49,19 @@
 #include "machine_hw_spi.h"
 #include "modmachine.h"
 #include "libs/qrcode.h"
+=======
+#include "sdkconfig.h"
+>>>>>>> master
 
+#ifdef CONFIG_MICROPY_USE_DISPLAY
 
-typedef struct _display_tft_obj_t {
-    mp_obj_base_t base;
-    machine_hw_spi_obj_t *spi;
-    display_config_t dconfig;
-    exspi_device_handle_t disp_spi_dev;
-    exspi_device_handle_t ts_spi_dev;
-    exspi_device_handle_t *disp_spi;
-    exspi_device_handle_t *ts_spi;
-    uint32_t tp_calx;
-    uint32_t tp_caly;
-} display_tft_obj_t;
+#include <stdint.h>
 
-const mp_obj_type_t display_tft_type;
+#include "py/obj.h"
 
 uint8_t disp_used_spi_host = 0;
 
+<<<<<<< HEAD
 static const char* const display_types[] = {
 	"ILI9341",
 	"ILI9488",
@@ -1950,11 +1946,27 @@ const mp_obj_type_t display_tft_type = {
     .locals_dict = (mp_obj_t)&display_tft_locals_dict,
 };
 
+=======
+
+#ifdef CONFIG_MICROPY_USE_TFT
+extern const mp_obj_type_t display_tft_type;
+#endif
+
+#ifdef CONFIG_MICROPY_USE_EVE
+extern const mp_obj_type_t display_eve_type;
+#endif
+
+>>>>>>> master
 //===============================================================
 STATIC const mp_rom_map_elem_t display_module_globals_table[] = {
     { MP_ROM_QSTR(MP_QSTR___name__), MP_ROM_QSTR(MP_QSTR_display) },
 
+    #ifdef CONFIG_MICROPY_USE_TFT
     { MP_OBJ_NEW_QSTR(MP_QSTR_TFT), MP_ROM_PTR(&display_tft_type) },
+    #endif
+    #ifdef CONFIG_MICROPY_USE_EVE
+    { MP_OBJ_NEW_QSTR(MP_QSTR_EVE), MP_ROM_PTR(&display_eve_type) },
+    #endif
 };
 
 //===============================================================================
@@ -1965,3 +1977,4 @@ const mp_obj_module_t mp_module_display = {
     .globals = (mp_obj_dict_t*)&display_module_globals,
 };
 
+#endif
