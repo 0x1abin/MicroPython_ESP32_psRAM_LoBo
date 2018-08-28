@@ -53,7 +53,6 @@ class M5Widget():
   def update(self):
     self.draw()
 
-
 class M5TextBox(M5Widget):
   def __init__(self, x=lcd.getCursor()[0], y=lcd.getCursor()[1], text='TextBox', font=lcd.FONT_Default, fgcolor=lcd.get_fg(), bgcolor=lcd.get_bg()):
     super().__init__(x, y, 0, 0, fgcolor, bgcolor)
@@ -124,7 +123,6 @@ class M5InputBox(M5Widget):
 # class M5Listbox(M5TextBox):
   # def __init__(self, x , y):M5TextBox.__init__(self)
     # pass
-
 
 # class M5Button(M5TextBox):
 #   def __init__(self, x=lcd.getCursor()[0], y=lcd.getCursor()[1], w=80, h=25, text='button', fgcolor=lcd.get_fg(), bgcolor=lcd.get_bg()):
@@ -420,7 +418,6 @@ class M5ProgressBar(M5Widget):
   #     return
   #   self.value = value
   #   drawPoint()
-
 
 class M5Image(M5Widget):
   def __init__(self, x=lcd.getCursor()[0] , y=lcd.getCursor()[1], file=None, scale=0):

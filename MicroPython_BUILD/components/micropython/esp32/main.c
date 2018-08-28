@@ -104,6 +104,18 @@ void mp_task(void *pvParameter)
 	esp_task_wdt_reset();
 	#endif
 
+	// BEEP
+	mp_hal_pin_output(25);
+	for (uint16_t t = 0; t < 50; t++) {
+		mp_hal_pin_od_high(25);
+		for (uint16_t i = 0; i < 1000; ++i)
+			__asm__("nop");
+		mp_hal_pin_od_low(25);
+		for (uint16_t i = 0; i < 40000; ++i)
+			__asm__("nop");
+		// vTaskDelay(2);
+	}
+
     uart_init();
 
 	#if (CONFIG_BOOT_SET_LED >= 0) && defined(CONFIG_BOOT_RESET_LED)
@@ -138,6 +150,7 @@ void mp_task(void *pvParameter)
 
 	// Initialize peripherals
     machine_pins_init();
+
 
     ESP_LOGI("MicroPython", "[=== MicroPython FreeRTOS task started (sp=%08x) ===]\n", sp);
 

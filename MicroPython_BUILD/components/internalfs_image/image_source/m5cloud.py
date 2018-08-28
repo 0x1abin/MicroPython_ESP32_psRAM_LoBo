@@ -37,7 +37,7 @@ class M5Cloud:
                             "_send_data": self.send_data}
 
         self.chipid = ubinascii.hexlify(machine.unique_id()).decode("utf-8")
-        self.mqtt = MQTTClient(self.chipid, server, port)
+        self.mqtt = MQTTClient('M5-'+self.chipid, server, port)
 
     # def on_connect(self, param):
     def on_connect(self):
@@ -52,6 +52,8 @@ class M5Cloud:
         event = topic.split('/')[-1]
         if event == "EXEC":
             data = data if type(data) == str else data.decode('utf-8')
+            # print("================ EXEC Handle ==================")
+            # print(data)
             try:
                 exec(data, globals(), self._server_ctx)
             except Exception as e:

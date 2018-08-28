@@ -216,7 +216,7 @@ def gyro_start(obj):
 
 	try:
 		from mpu6050 import MPU6050
-		obj['imu'] = MPU6050(i2c)
+		obj['imu'] = MPU6050(i2c, accel_sf=9.80665)
 	except:
 		from mpu9250 import MPU9250
 		obj['imu'] = MPU9250(i2c)

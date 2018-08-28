@@ -2,25 +2,35 @@
 import sys
 import gc
 import uos as os
+import utime as time
 
 # Set default path
 # Needed for importing modules and upip
 sys.path[1] = '/flash/lib'
 
-# Start
-from m5stack import lcd,buttonA
-from utils import *
-lcd.setBrightness(300)
 
-# Connect M5Cloud
-if buttonA.isPressed():
-    import bootstrapper
-    from m5cloud import M5Cloud
-    from config import config
-    m5cloud = M5Cloud(token=bootstrapper.apikey, server=config['mqtt']['server'], port=config['mqtt']['port'])
-    m5cloud.run(thread=True)
-else:
-    if exists('_main.py') and not exists('main.py'):
-        os.rename('_main.py', 'main.py')
+# boot view
+from m5stack import *
+lcd.setBrightness(300)
+lcd.image(lcd.CENTER, lcd.CENTER, 'img/uiflow_logo_80x80.bmp')
+lcd.setColor(0xCCCCCC, 0)
+lcd.print('UPLOAD', 40, 225)
+lcd.print('APP.LIST', 130, 225)
+lcd.print('Wi-Fi', 235, 225)
+lcd.setCursor(0, 0)
+
+cnt_down = time.ticks_ms() + 2000
+while time.ticks_ms() < cnt_down:
+    if buttonA.isPressed():   # M5Cloud upload
+        speaker.tone(2000, 50, volume=1) # Beep
+        import bootstrapper
+
+    elif buttonB.isPressed(): # APP list
+        pass
+
+    elif buttonC.isPressed(): # WiFi setting
+        import wificonfig
+        wificonfig.webserver_start()
+
 
 gc.collect()

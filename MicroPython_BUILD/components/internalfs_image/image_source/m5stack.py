@@ -1,78 +1,119 @@
 from micropython import const
-import machine, ubinascii
+import machine
+import ubinascii
 import uos as os
 import utime as time
 import display as lcd
 import utils
-from button import Button
+from m5button import M5Button
 
 VERSION = "v0.4.3"
 
 _BUTTON_A_PIN = const(39)
 _BUTTON_B_PIN = const(38)
 _BUTTON_C_PIN = const(37)
-_SPEAKER_PIN  = const(25)
+_SPEAKER_PIN = const(25)
 
 
 class Speaker:
-  def __init__(self, pin=25, volume=5):
-    self.pwm = machine.PWM(machine.Pin(pin), 1, 0, 0)
-    self._timer = 0
-    self._volume = volume
-    self._blocking = True
+    def __init__(self, pin=25, volume=5):
+        self.pwm = machine.PWM(machine.Pin(pin), 1, 0, 0)
+        self._timer = 0
+        self._volume = volume
+        self._blocking = True
+        self._beat_time = 500
 
-  def _timeout_cb(self, timer):
-    self._timer.deinit()
-    self.pwm.duty(0)
-    self.pwm.freq(1)
-    self.pwm.deinit()
-
-  def tone(self, freq=1800, duration=200, volume=None):
-    if volume == None:
-      self.pwm.init(freq=freq, duty=self._volume)
-    else:
-      self.pwm.init(freq=freq, duty=volume)
-    if duration > 0:
-      if self._blocking:
-        time.sleep_ms(duration)
+    def _timeout_cb(self, timer):
+        self._timer.deinit()
         self.pwm.duty(0)
         self.pwm.freq(1)
         self.pwm.deinit()
-      else:
-        self._timer = machine.Timer(3)
-        self._timer.init(period=duration, mode=self._timer.ONE_SHOT, callback=self._timeout_cb)   
 
-  def volume(self, val):
-    self._volume = val
+    def tone(self, freq=1800, duration=200, volume=None):
+        if volume == None:
+            self.pwm.init(freq=freq, duty=self._volume)
+        else:
+            self.pwm.init(freq=freq, duty=volume)
+        if duration > 0:
+            if self._blocking:
+                time.sleep_ms(duration)
+                self.pwm.duty(0)
+                self.pwm.freq(1)
+                self.pwm.deinit()
+            else:
+                self._timer = machine.Timer(3)
+                self._timer.init(
+                    period=duration, mode=self._timer.ONE_SHOT, callback=self._timeout_cb)
 
-  def setblocking(self, val=True):
-    self._blocking = val
+    def sing(self, freq=1800, beat=1, volume=None):
+        self.tone(freq, beat*self._beat_time, volume)
+
+    def set_beat(self, value=120):
+        self._beat_time = int(60000 / value)
+
+    def volume(self, val):
+        self._volume = val
+
+    def setblocking(self, val=True):
+        self._blocking = val
 
 
 def fimage(x, y, file, type=1):
-  if file[:3] == '/sd':
-    utils.filecp(file, '/flash/fcache', blocksize=8192)
-    lcd.image(x, y, '/flash/fcache', 0, type)
-    os.remove('/flash/fcache')
-  else:
-    lcd.image(x, y, file, 0, type)
+    if file[:3] == '/sd':
+        utils.filecp(file, '/flash/fcache', blocksize=8192)
+        lcd.image(x, y, '/flash/fcache', 0, type)
+        os.remove('/flash/fcache')
+    else:
+        lcd.image(x, y, file, 0, type)
+
+
+class RGB_Bar:
+    def __init__(self):
+        self.led_bar = machine.Neopixel(15, 10)
+
+    def set_dir(self, dir, color):
+        if dir == 'left':
+            for i in range(6, 11):
+                self.led_bar.set(i, color)
+                time.sleep_ms(5)
+        else:
+            for i in range(1, 6):
+                self.led_bar.set(i, color)
+                time.sleep_ms(5)
+
+    def set(self, number, color):
+        self.led_bar.set(number, color)
+
+    def set_all(self, color):
+        for i in range(1, 11):
+            self.led_bar.set(i, color)
+            time.sleep_ms(5)
 
 
 def delay(ms):
-  time.sleep_ms(ms)
+    time.sleep_ms(ms)
+
+
+def map_value(value, input_min, input_max, aims_min, aims_max):
+    value_deal = value * (aims_max - aims_min) / \
+        (input_max - input_min) + aims_min
+    value_deal = value_deal if value_deal < aims_max else aims_max
+    value_deal = value_deal if value_deal > aims_min else aims_min
+    return value_deal
 
 
 # ------------------ M5Stack -------------------
-
 # Node ID
 node_id = ubinascii.hexlify(machine.unique_id()).decode('utf-8')
 print('\nDevice ID:' + node_id)
 print('LCD initializing...', end='')
 
+# pin Analog and digital
 
 # LCD
 lcd = lcd.TFT()
-lcd.init(lcd.M5STACK, width=240, height=320, speed=40000000, rst_pin=33, backl_pin=32, miso=19, mosi=23, clk=18, cs=14, dc=27, bgr=True, backl_on=1, invrot=3)
+lcd.init(lcd.M5STACK, width=240, height=320, speed=40000000, rst_pin=33, backl_pin=32,
+         miso=19, mosi=23, clk=18, cs=14, dc=27, bgr=True, backl_on=1, invrot=3)
 lcd.setBrightness(10)
 lcd.clear()
 lcd.setColor(0xCCCCCC)
@@ -98,11 +139,19 @@ print('Done!')
 
 
 # BUTTON
-buttonA = Button(_BUTTON_A_PIN)
-buttonB = Button(_BUTTON_B_PIN)
-buttonC = Button(_BUTTON_C_PIN)
+buttonA = M5Button(_BUTTON_A_PIN)
+buttonB = M5Button(_BUTTON_B_PIN)
+buttonC = M5Button(_BUTTON_C_PIN)
 
+
+def button_timer(timer):
+    buttonA.read()
+    buttonB.read()
+    buttonC.read()
+
+
+t1 = machine.Timer(1)
+t1.init(period=15, callback=button_timer)
 
 # SPEAKER
 speaker = Speaker()
-

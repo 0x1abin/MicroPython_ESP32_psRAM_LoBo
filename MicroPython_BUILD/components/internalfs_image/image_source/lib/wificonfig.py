@@ -6,6 +6,7 @@ import usocket as socket
 
 wlan_sta = network.WLAN(network.STA_IF); 
 wlan_ap = network.WLAN(network.AP_IF)
+wlan_sta.active(True)
 scanlist = []
 
 def do_connect(ntwrk_ssid, netwrk_pass):

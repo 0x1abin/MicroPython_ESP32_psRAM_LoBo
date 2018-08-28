@@ -1,16 +1,14 @@
 import gc
 import uos as os
 import ubinascii
-from m5stack import lcd, buttonC, speaker
+from m5stack import lcd, buttonC
 from utils import *
 from config import config
 
-# Beep
-speaker.tone(500)
 
 # Reset apikey
 if buttonC.isPressed():
-    uos.remove('apikey.pem')
+    os.remove('apikey.pem')
 
 
 # Connect network
@@ -47,11 +45,18 @@ lcd.font(lcd.FONT_DejaVu24)
 lcd.print(apikey, 12, 138, color=lcd.ORANGE)
 lcd.qrcode(config['qrcode_url'] + apikey, 126, 46, 175)
 
+# M5Cloud
+from m5cloud import M5Cloud
+from config import config
+m5cloud = M5Cloud(token=apikey, server=config['mqtt']['server'], port=config['mqtt']['port'])
+m5cloud.run(thread=False)
 
-# ingre main
-if exists('main.py'):
-    if exists('_main.py'):
-        os.remove('_main.py')
-    os.rename('main.py', '_main.py')
+
+# # ingre main
+# if exists('main.py'):
+#     if exists('_main.py'):
+#         os.remove('_main.py')
+#     os.rename('main.py', '_main.py')
+
 
 gc.collect()
