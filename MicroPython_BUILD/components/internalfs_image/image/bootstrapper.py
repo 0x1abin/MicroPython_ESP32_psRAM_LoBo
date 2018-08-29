@@ -52,11 +52,4 @@ m5cloud = M5Cloud(token=apikey, server=config['mqtt']['server'], port=config['mq
 m5cloud.run(thread=False)
 
 
-# # ingre main
-# if exists('main.py'):
-#     if exists('_main.py'):
-#         os.remove('_main.py')
-#     os.rename('main.py', '_main.py')
-
-
 gc.collect()

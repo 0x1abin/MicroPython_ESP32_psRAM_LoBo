@@ -5,26 +5,30 @@ from utils import filecp
 
 triangle_last = [5, 19]
 def draw_triangle(x, y):
-  global triangle_last
-  lcd.triangle(triangle_last[0], triangle_last[1], triangle_last[0], triangle_last[1]+7, triangle_last[0]+8, triangle_last[1]+3, lcd.BLACK, lcd.BLACK)
-  lcd.triangle(x, y, x, y+7, x+8, y+3, lcd.RED, lcd.RED)
-  triangle_last = [x, y]
+    global triangle_last
+    lcd.triangle(triangle_last[0], triangle_last[1], triangle_last[0], triangle_last[1]+7, triangle_last[0]+8, triangle_last[1]+3, lcd.BLACK, lcd.BLACK)
+    lcd.triangle(x, y, x, y+7, x+8, y+3, lcd.RED, lcd.RED)
+    triangle_last = [x, y]
 
 def file_start():
     global files, files_len, draw_number
     lcd.clear()
-    lcd.triangle(59, 228, 67, 215, 75, 228, lcd.WHITE, lcd.WHITE)
-    lcd.triangle(233, 215, 241, 228, 249, 215, lcd.WHITE, lcd.WHITE)
-    lcd.text(249, 216, '/DEL', lcd.RED)
-    # lcd.triangle(247, 215, 255, 228, 263, 215, lcd.GREEN, lcd.GREEN)
-    lcd.text(0, 0, 'Select program to run:', lcd.WHITE)
-    lcd.text(142, 215, 'RUN', lcd.WHITE)
+    lcd.triangle(61, 226, 67, 216, 73, 226, 0xCCCCCC, 0xCCCCCC)
+    lcd.triangle(235, 216, 241, 226, 247, 216, 0xCCCCCC, 0xCCCCCC)
+    lcd.text(249, 216, '/ DEL', lcd.RED)
+    lcd.text(0, 0, 'Select program to run:', lcd.GREEN)
+    lcd.text(142, 215, 'RUN', 0xCCCCCC)
     files = os.listdir('/flash/apps')
     files_len = len(files)
     for i in range(files_len):
         lcd.text(20, 18 + i*15, files[i], lcd.YELLOW)
     draw_number = 0
     draw_triangle(6, 19)
+    jpg_name = files[draw_number].split('.')[0] + '.jpg'
+    if jpg_name in os.listdir('image_app'):
+        lcd.image(190, 80, 'image_app/{}'.format(jpg_name))
+    else:
+        lcd.image(190, 80, 'image_app/{}'.format('none.jpg'))
 
 def file_choose():
     global files, files_len, draw_number
@@ -33,13 +37,23 @@ def file_choose():
         if buttonA.wasReleased():
             draw_number = draw_number - 1 if draw_number > 1 else 0
             draw_triangle(6, 19+draw_number*15)
+            jpg_name = files[draw_number].split('.')[0] + '.jpg'
+            if jpg_name in os.listdir('image_app'):
+                lcd.image(190, 80, 'image_app/{}'.format(jpg_name))
+            else:
+                lcd.image(190, 80, 'image_app/{}'.format('none.jpg'))
         elif buttonB.wasReleased():
             filecp('apps/{}'.format(files[draw_number]), 'main.py')
             break
         elif buttonC.wasReleased():
             draw_number = draw_number + 1 if draw_number < (files_len-1) else (files_len - 1)
             draw_triangle(6, 19+draw_number*15)
-        elif buttonC.releasedFor(400):
+            jpg_name = files[draw_number].split('.')[0] + '.jpg'
+            if jpg_name in os.listdir('image_app'):
+                lcd.image(190, 80, 'image_app/{}'.format(jpg_name))
+            else:
+                lcd.image(190, 80, 'image_app/{}'.format('none.jpg'))
+        elif buttonC.releasedFor(600):
             lcd.clear()
             lcd.text(130, 110, 'delete ?', lcd.RED)
             lcd.text(54, 215, 'YES', lcd.RED)

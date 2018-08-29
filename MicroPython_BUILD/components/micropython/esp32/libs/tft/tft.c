@@ -3290,7 +3290,6 @@ int TFT_read_touch(int *x, int* y, uint8_t raw)
 	return 1;
 }
 
-<<<<<<< HEAD
 //.............LCD LED .............
 void led_pwm_init() {
 	ledc_timer_config_t ledc_timer = {
@@ -3316,6 +3315,5 @@ void led_pwm_init() {
 	ledc_set_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_7, duty);
 	ledc_update_duty(LEDC_HIGH_SPEED_MODE, LEDC_CHANNEL_7);
 }
-=======
-#endif // CONFIG_MICROPY_USE_TFT
->>>>>>> master
+
+#endif

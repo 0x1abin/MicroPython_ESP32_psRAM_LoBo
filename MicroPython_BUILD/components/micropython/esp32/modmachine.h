@@ -92,6 +92,14 @@ typedef struct _machine_timer_obj_t {
     uint64_t alarm;
 } machine_timer_obj_t;
 
+typedef struct _esp32_pwm_obj_t {
+    mp_obj_base_t base;
+    gpio_num_t pin;
+    uint8_t active;
+    uint8_t channel;
+    uint8_t timer;
+} esp32_pwm_obj_t;
+
 extern bool mpy_use_spiram;
 extern int MPY_DEFAULT_STACK_SIZE;
 extern int MPY_MAX_STACK_SIZE;

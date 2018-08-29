@@ -1,1 +1,0 @@
-Number = type(1)
